@@ -76,6 +76,7 @@ pygeoip = "*"
 pyintel471 = "*"
 pyipasnhistory = "*"
 pymisp = { version = "*", extras = ["fileobjects", "openioc", "pdfexport", "email", "url"] }
+pyoti = "*"
 pypdns = "*"
 pypssl = "*"
 pysafebrowsing = "*"
