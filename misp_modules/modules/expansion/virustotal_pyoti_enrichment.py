@@ -23,10 +23,10 @@ moduleinfo = {
     'name': 'VT PyOTI Enrichment',
     'logo': 'virustotal.png',
     'requirements': ['Access to VirusTotal (apikey)'],
-    'features': "The module takes a hash attribute as input and queries VirusTotal's API to fetch additional data about it. The result, if the hash has a threat label tag the MISPAttribute with it. Also, check if the hash is from a known software distributor and tag MISPAttribute with PyOTI taxonomy tag and create a file object describing the file the input hash is related to.",
+    'features': "The module takes a hash attribute as input and queries VirusTotal's API to fetch additional data about it. The result, if the hash has a threat label tag the MISPAttribute with it. Also, check if the hash is from a known software distributor and tag MISPAttribute with PyOTI taxonomy tag and create a file object describing the file.",
     'references': ['https://github.com/RH-ISAC/PyOTI', 'https://www.virustotal.com'],
     'input': 'A hash attribute (md5, sha1, sha256).',
-    'output': 'File object related to the input attribute found on VirusTotal.',
+    'output': 'Tagging of the queried hash attribute.',
 }
 moduleconfig = ["apikey"]
 
@@ -52,16 +52,17 @@ def parse_response(response: dict):
         if feature in response.keys()  and response[feature]:
             if feature in ('md5', 'sha1', 'sha256'):
                 misp_attribute = {
-                    'tags': [],
+                    'value': response[feature],
+                    'comment': '',
+                    #'tags': [],
                 }
                 if response['data']['attributes'].get('popular_threat_classification'):
                     threat_label = response['data']['attributes']['popular_threat_classification']['suggested_threat_label']
-                    misp_attribute['tags'].append(threat_label)
+                    #misp_attribute['tags'].append(threat_label)
                 if response['data']['attributes'].get('known_distributors'):
                     distributors = response['data']['attributes']['known_distributors']['distributors']
-                    misp_attribute['tags'].append(distributors)
+                    #misp_attribute['tags'].append(distributors)
                     misp_attribute['comment'] = f'Distributors: {distributors}'
-                misp_attribute['value'] = response[feature]
                 misp_attribute.update(attribute)
                 misp_object.add_attribute(**misp_attribute)
             else:
