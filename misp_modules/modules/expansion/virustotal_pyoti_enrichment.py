@@ -65,7 +65,7 @@ def parse_response(response: dict):
                 misp_attribute = {'value': response[feature]}
                 misp_attribute.update(attribute)
                 misp_object.add_attribute(**misp_attribute)
-    misp_event.add_object(**misp_object)
+    misp_event.add_object(misp_object)
     event = json.loads(misp_event.to_json())
     results = {'Object': event['Object']}
 
