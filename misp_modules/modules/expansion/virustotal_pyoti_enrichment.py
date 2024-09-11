@@ -51,13 +51,13 @@ def parse_response(response: dict):
     for feature, attribute in attribute_mapping.items():
         if feature in response.keys() and response[feature]:
             if feature in ('md5', 'sha1', 'sha256'):
-                misp_attribute = {'value': response[feature]}
+                misp_attribute = {'value': response[feature], 'Tag': []}
                 if response.get('popular_threat_classification'):
                     threat_label = response['popular_threat_classification']['suggested_threat_label']
-                    misp_attribute['tags'].append(threat_label)
+                    misp_attribute['Tag'].append({'name': threat_label})
                 if response.get('known_distributors'):
                     distributors = response['known_distributors']['distributors']
-                    misp_attribute['tags'].append(distributors)
+                    misp_attribute['Tag'].append({'name': distributors})
                     misp_attribute['comment'] = f'Distributors: {distributors}'
                 misp_attribute.update(attribute)
                 misp_object.add_attribute(**misp_attribute)
