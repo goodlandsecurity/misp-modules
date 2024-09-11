@@ -49,19 +49,15 @@ def parse_response(response: dict):
     misp_event = MISPEvent()
     misp_object = MISPObject('file')
     for feature, attribute in attribute_mapping.items():
-        if feature in response.keys()  and response[feature]:
+        if feature in response.keys() and response[feature]:
             if feature in ('md5', 'sha1', 'sha256'):
-                misp_attribute = {
-                    'value': response[feature],
-                    'comment': '',
-                    #'tags': [],
-                }
-                if response['data']['attributes'].get('popular_threat_classification'):
-                    threat_label = response['data']['attributes']['popular_threat_classification']['suggested_threat_label']
-                    #misp_attribute['tags'].append(threat_label)
-                if response['data']['attributes'].get('known_distributors'):
-                    distributors = response['data']['attributes']['known_distributors']['distributors']
-                    #misp_attribute['tags'].append(distributors)
+                misp_attribute = {'value': response[feature]}
+                if response.get('popular_threat_classification'):
+                    threat_label = response['popular_threat_classification']['suggested_threat_label']
+                    misp_attribute['tags'].append(threat_label)
+                if response.get('known_distributors'):
+                    distributors = response['known_distributors']['distributors']
+                    misp_attribute['tags'].append(distributors)
                     misp_attribute['comment'] = f'Distributors: {distributors}'
                 misp_attribute.update(attribute)
                 misp_object.add_attribute(**misp_attribute)
@@ -69,7 +65,7 @@ def parse_response(response: dict):
                 misp_attribute = {'value': response[feature]}
                 misp_attribute.update(attribute)
                 misp_object.add_attribute(**misp_attribute)
-    misp_event.add_object(**misp_object)
+        misp_event.add_object(**misp_object)
 
     results = {'Object': [json.loads(misp_object.to_json()) for misp_object in misp_event.objects]}
 
@@ -97,7 +93,7 @@ def handler(q=False):
     vt_response = run_enrichment(request['config']['apikey'], attribute)
 
     if vt_response.get('data'):
-        return parse_response(vt_response)
+        return parse_response(vt_response['data']['attributes'])
 
     elif vt_response.get('error'):
         misperrors['error'] = vt_response['error']['message']
