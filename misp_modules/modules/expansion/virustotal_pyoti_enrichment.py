@@ -39,12 +39,12 @@ def run_enrichment(apikey: str, attribute: dict) -> dict:
 
 def parse_response(response: dict):
     attribute_mapping = {
-        'md5': {'type': 'md5', 'object_relation': 'environment', 'distribution': 5},
-        'sha1': {'type': 'sha1', 'object_relation': 'environment', 'distribution': 5},
-        'sha256': {'type': 'sha256', 'object_relation': 'environment', 'distribution': 5},
-        'imphash': {'type': 'imphash', 'object_relation': 'environment', 'distribution': 5},
-        'size': {'size-in-bytes': 'imphash', 'object_relation': 'environment', 'distribution': 5},
-        'meaningful_name': {'filename': 'imphash', 'object_relation': 'environment', 'distribution': 5}
+        'md5': {'type': 'md5', 'object_relation': 'md5', 'distribution': 5},
+        'sha1': {'type': 'sha1', 'object_relation': 'sha1', 'distribution': 5},
+        'sha256': {'type': 'sha256', 'object_relation': 'sha256', 'distribution': 5},
+        'imphash': {'type': 'imphash', 'object_relation': 'imphash', 'distribution': 5},
+        'size': {'type': 'imphash', 'object_relation': 'size-in-bytes', 'distribution': 5},
+        'meaningful_name': {'type': 'imphash', 'object_relation': 'filename', 'distribution': 5}
     }
     misp_event = MISPEvent()
     misp_object = MISPObject('file')
@@ -65,7 +65,7 @@ def parse_response(response: dict):
                 misp_attribute = {'value': response[feature]}
                 misp_attribute.update(attribute)
                 misp_object.add_attribute(**misp_attribute)
-    misp_event.add_object(misp_object)
+    misp_event.add_object(**misp_object)
     event = json.loads(misp_event.to_json())
     results = {'Object': event['Object']}
 
