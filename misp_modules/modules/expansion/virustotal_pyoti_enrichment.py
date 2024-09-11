@@ -71,8 +71,7 @@ def parse_response(response: dict):
                 misp_object.add_attribute(**misp_attribute)
     misp_event.add_object(**misp_object)
 
-    event = json.loads(misp_event.to_json())
-    results = {'Object': event['Object']}
+    results = {'Object': [json.loads(misp_object.to_json()) for misp_object in misp_event.objects]}
 
     return {'results': results}
 
