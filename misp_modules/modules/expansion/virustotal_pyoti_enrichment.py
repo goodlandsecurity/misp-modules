@@ -43,8 +43,8 @@ def parse_response(response: dict):
         'sha1': {'type': 'sha1', 'object_relation': 'sha1', 'distribution': 5},
         'sha256': {'type': 'sha256', 'object_relation': 'sha256', 'distribution': 5},
         'imphash': {'type': 'imphash', 'object_relation': 'imphash', 'distribution': 5},
-        'size': {'type': 'imphash', 'object_relation': 'size-in-bytes', 'distribution': 5},
-        'meaningful_name': {'type': 'imphash', 'object_relation': 'filename', 'distribution': 5}
+        'size': {'type': 'size-in-bytes', 'object_relation': 'size-in-bytes', 'distribution': 5},
+        'meaningful_name': {'type': 'filename', 'object_relation': 'filename', 'distribution': 5}
     }
     misp_event = MISPEvent()
     misp_object = MISPObject('file')
@@ -57,7 +57,7 @@ def parse_response(response: dict):
                     misp_attribute['Tag'].append({'name': threat_label})
                 if response.get('known_distributors'):
                     distributors = response['known_distributors']['distributors']
-                    misp_attribute['Tag'].append({'name': distributors})
+                    misp_attribute['Tag'].append({'name': 'pyoti:virustotal="known-distributor"'})
                     misp_attribute['comment'] = f'Distributors: {distributors}'
                 misp_attribute.update(attribute)
                 misp_object.add_attribute(**misp_attribute)
